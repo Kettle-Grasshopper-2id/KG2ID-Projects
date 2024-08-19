@@ -1,5 +1,3 @@
-
-
 from bs4 import BeautifulSoup
 import pandas as pd
 import spacy
@@ -9,6 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
+import os
 
 # Initialize NLP models
 nlp = spacy.load("en_core_web_sm")  # spaCy model for NER
@@ -92,11 +91,17 @@ def save_to_excel(data, output_file):
 
 # Example usage:
 if __name__ == "__main__":
-    # Load your XML data (assuming it's in a string or file)
-    with open('unified_agenda.xml', 'r') as file:
-        xml_data = file.read()
-    
-    regulations = parse_regulation_info(xml_data)
-    output_file = 'filtered_unified_agenda_regulations.xlsx'
-    save_to_excel(regulations, output_file)
-    print(f"Filtered data saved to {output_file}")
+    # Get the path to the XML file (adjusted for Docker or local use)
+    xml_file_path = os.path.join("/app", "unified_agenda.xml")  # Updated to explicitly use the full path
+
+    try:
+        # Load your XML data (assuming it's in a string or file)
+        with open(xml_file_path, 'r') as file:
+            xml_data = file.read()
+        
+        regulations = parse_regulation_info(xml_data)
+        output_file = 'filtered_unified_agenda_regulations.xlsx'
+        save_to_excel(regulations, output_file)
+        print(f"Filtered data saved to {output_file}")
+    except FileNotFoundError:
+        print(f"Error: The file {xml_file_path} was not found.")
